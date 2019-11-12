@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
 class HomeWidget extends StatefulWidget {
   final int selectScane;
   const HomeWidget({Key key, this.selectScane}) : super(key: key);
+  
   @override
   State<StatefulWidget> createState() {
     switch(selectScane){
@@ -45,7 +46,6 @@ class HomeWidget extends StatefulWidget {
       return GameSelect();
       break;
     }
-    
   }
 }
 
@@ -139,7 +139,7 @@ class GameSelect extends State<HomeWidget> {
                           children: <Widget>[
                             Text("ゲームのタイトル",textAlign: TextAlign.left),
                             TextField(
-                              controller: gameLore,
+                              controller: gameTitle,
                               decoration: InputDecoration(
                                 hintText: "入力してください。"
                               ),
@@ -184,6 +184,8 @@ class DataTypeSelect extends State<HomeWidget> {
   TextEditingController dataTypeTitle = new TextEditingController();
   TextEditingController dataTypeLore = new TextEditingController();
   List<DataType> dataList = new List();
+  DataType menuDataType;
+  String modelText = "";
   
   void _addItem(List<modelData> modelType,List<String> dataName,String title,String lore){
     setState(() {
@@ -191,7 +193,14 @@ class DataTypeSelect extends State<HomeWidget> {
     });
   }
 
-    @override
+  void _addMenuItem(modelData md){
+    setState(() {
+      menuDataType.modelDataList.add(md);
+      menuDataType.dataNameList.add("");
+    });
+  }
+
+  @override
   Widget build(BuildContext context){
     return Scaffold(
       backgroundColor: Colors.lime[100],
@@ -255,6 +264,9 @@ class DataTypeSelect extends State<HomeWidget> {
               child: FloatingActionButton(
                 child: Icon(Icons.add),
                 onPressed: (){
+                  setState(() {
+                    menuDataType = new DataType(new List<modelData>(), new List<String>(), "dataTitle", "dataLore");
+                  });
                   showDialog(
                     context: context,
                     builder: (_) => 
@@ -281,7 +293,6 @@ class DataTypeSelect extends State<HomeWidget> {
                                 hintText: "入力してください。"
                               ),
                             ),
-
                             Container(
                               padding: EdgeInsets.all(5),
                               child: Row(
@@ -297,7 +308,7 @@ class DataTypeSelect extends State<HomeWidget> {
                                         child: FractionalTranslation(
                                           translation: Offset(0, 0),
                                           child: FloatingActionButton(
-                                            onPressed: (){},
+                                            onPressed: (){_addMenuItem(modelData.intData);},
                                             backgroundColor: Colors.lime[300],
                                             child: Icon(Icons.add),
                                           ),
@@ -315,7 +326,7 @@ class DataTypeSelect extends State<HomeWidget> {
                                         child: FractionalTranslation(
                                           translation: Offset(0, 0),
                                           child: FloatingActionButton(
-                                            onPressed: (){},
+                                            onPressed: (){_addMenuItem(modelData.floatData);},
                                             backgroundColor: Colors.lime[300],
                                             child: Icon(Icons.add),
                                           ),
@@ -333,7 +344,7 @@ class DataTypeSelect extends State<HomeWidget> {
                                         child: FractionalTranslation(
                                           translation: Offset(0, 0),
                                           child: FloatingActionButton(
-                                            onPressed: (){},
+                                            onPressed: (){_addMenuItem(modelData.boolData);},
                                             backgroundColor: Colors.lime[300],
                                             child: Icon(Icons.add),
                                           ),
@@ -361,7 +372,7 @@ class DataTypeSelect extends State<HomeWidget> {
                                         child: FractionalTranslation(
                                           translation: Offset(0, 0),
                                           child: FloatingActionButton(
-                                            onPressed: (){},
+                                            onPressed: (){_addMenuItem(modelData.stringData);},
                                             backgroundColor: Colors.lime[300],
                                             child: Icon(Icons.add),
                                           ),
@@ -379,7 +390,7 @@ class DataTypeSelect extends State<HomeWidget> {
                                         child: FractionalTranslation(
                                           translation: Offset(0, 0),
                                           child: FloatingActionButton(
-                                            onPressed: (){},
+                                            onPressed: (){_addMenuItem(modelData.imageData);},
                                             backgroundColor: Colors.lime[300],
                                             child: Icon(Icons.add),
                                           ),
@@ -397,7 +408,7 @@ class DataTypeSelect extends State<HomeWidget> {
                                         child: FractionalTranslation(
                                           translation: Offset(0, 0),
                                           child: FloatingActionButton(
-                                            onPressed: (){},
+                                            onPressed: (){_addMenuItem(modelData.textData);},
                                             backgroundColor: Colors.lime[300],
                                             child: Icon(Icons.add),
                                           ),
@@ -417,13 +428,35 @@ class DataTypeSelect extends State<HomeWidget> {
                                   color: Colors.lightGreen[100],
                                   borderRadius: new BorderRadius.circular(10.0),
                                 ),
-                                child: new ListView.builder(
-                                  itemCount: 10,
+                                child: ListView.builder(
+                                  itemCount: menuDataType.modelDataList.length,
                                   itemBuilder: (context,int index){
+                                    switch (menuDataType.modelDataList[index]) {
+                                          case modelData.intData:
+                                            modelText = "Int";
+                                            break;
+                                          case modelData.floatData:
+                                            modelText = "Float";
+                                            break;
+                                          case modelData.boolData:
+                                            modelText = "Bool";
+                                            break;
+                                          case modelData.stringData:
+                                            modelText = "String";
+                                            break;
+                                          case modelData.imageData:
+                                            modelText = "Image";
+                                            break;
+                                          case modelData.textData:
+                                            modelText = "Text";
+                                            break;
+                                          default:
+                                          break;
+                                    }
                                     return ListTile(
                                       leading: CircleAvatar(
                                         backgroundColor: Colors.lightGreen[200],
-                                        child: Text("Int"),
+                                        child: Text(modelText),
                                       ),
                                       title: TextField(
                                         controller: dataTypeLore,
@@ -437,7 +470,6 @@ class DataTypeSelect extends State<HomeWidget> {
                               ),
                             //),
                             
-
                             const SizedBox(height: 30,width: 120),
                             RaisedButton(
                               color: Colors.lightGreen[100],
@@ -483,7 +515,6 @@ class DataType{
   final String dataLore;
 
   DataType(this.modelDataList, this.dataNameList, this.dataTitle, this.dataLore);
-
 }
 
 class GameData{
