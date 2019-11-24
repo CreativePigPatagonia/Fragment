@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "732522451988",
+    "firebase_url": "https://testproject-e7dea.firebaseio.com",
+    "project_id": "testproject-e7dea",
+    "storage_bucket": "testproject-e7dea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732522451988:android:e597e1680beb7d46eb0301",
+        "android_client_info": {
+          "package_name": "com.example.hello_world"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732522451988-o1bbqqafah7pjnhlaieorcna770lg3b7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCykcNe4eojBeUfzzDzhCy9jMW5KbTEPOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732522451988-o1bbqqafah7pjnhlaieorcna770lg3b7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "732522451988-ajeofdt05l22vu6bukvfjth0a16g7reo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "patagonia.helloWorld"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
