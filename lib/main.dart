@@ -106,17 +106,17 @@ class GameData {
   final String gameLore;
   final DateTime gameDate;
   final DocumentReference reference;
-  
+
   GameData.fromMap(Map<String, dynamic> map, {this.reference})
-     : assert(map['gameTitle'] != null),
-       assert(map['gameLore'] != null),
-       assert(map['gameDate'] != null),
-       gameTitle = map['gameTitle'],
-       gameLore = map['gameLore'],
-       gameDate = map['gameDate'];
+      : assert(map['gameTitle'] != null),
+        assert(map['gameLore'] != null),
+        assert(map['gameDate'] != null),
+        gameTitle = map['gameTitle'],
+        gameLore = map['gameLore'],
+        gameDate = map['gameDate'];
 
   GameData.fromSnapshot(DocumentSnapshot snapshot)
-     : this.fromMap(snapshot.data, reference: snapshot.reference);
+      : this.fromMap(snapshot.data, reference: snapshot.reference);
 }
 
 class GameSelect extends State<StateHome> {
@@ -126,45 +126,52 @@ class GameSelect extends State<StateHome> {
   AsyncSnapshot<QuerySnapshot> syncSnap;
   List<String> documentKey = new List<String>();
 
-  void _addItem(String title, String lore, int index,AsyncSnapshot<QuerySnapshot> snap) {
+  //ログイン後に値を引き継ぐ
+  String userIdentity = "User";
+  List<String> roomIdentity = ["GaUEfMkhutZSi534v8ir"];
+  List<String> roomKey = ["Akey"];
+
+  void _addItem(
+      String title, String lore, int index, AsyncSnapshot<QuerySnapshot> snap) {
     setState(() {
       if (index == -1) {
         debugPrint("A");
         Firestore.instance.collection("gameData").add({
-          "gameTitle" : title,
-          "gameLore" : lore,
-          "gameData" : DateTime.now(),
+          "gameTitle": title,
+          "gameLore": lore,
+          "gameData": DateTime.now(),
         });
       } else {
         debugPrint("B");
-        Firestore.instance.collection("gameData").document(documentKey[index]).setData({
-          "gameTitle" : title,
-          "gameLore" : lore,
-          "gameData" : DateTime.now(),
+        Firestore.instance
+            .collection("gameData")
+            .document(snap.data.documents[index].documentID)
+            .setData({
+          "gameTitle": title,
+          "gameLore": lore,
+          "gameData": DateTime.now(),
         });
       }
     });
   }
 
-
-  
   @override
   Widget build(BuildContext context) {
-    Widget main = StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
-          .collection('gameData' /*FireBase:コレクション名*/)
-          .snapshots(),
+    return StreamBuilder<QuerySnapshot>(
+      //表示したいFireStoreの保存先を指定。
+      stream: Firestore.instance.collection('Room').snapshots(),
+
+      //streamが更新されるたびに呼ばれる
       builder: (context, snapshot) {
         syncSnap = snapshot;
-        
+
+        //データが取れていない時の処理
         if (!snapshot.hasData) return LinearProgressIndicator();
-        //return (context, snapshot.data.documents);
-        debugPrint("1");
+        snapshot.data.documents.forEach((var docu) {});
         return Scaffold(
           backgroundColor: Colors.lime[100],
           body: ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              debugPrint("2");
               return Dismissible(
                 background: Container(
                   color: Colors.yellow,
@@ -185,7 +192,7 @@ class GameSelect extends State<StateHome> {
                 },
                 child: InkWell(
                   onLongPress: () {
-                        debugPrint("build" + index.toString());
+                    debugPrint("build" + index.toString());
 
                     showDialog(
                         context: context,
@@ -204,16 +211,21 @@ class GameSelect extends State<StateHome> {
                         Container(
                           margin: EdgeInsets.all(10),
                           child: ListTile(
-                            title: Text(snapshot.data.documents[index].data['gameTitle'].toString()),
+                            title: Text(snapshot
+                                .data.documents[index].data['gameTitle']
+                                .toString()),
                             leading: Icon(Icons.person),
-                            subtitle: Text(snapshot.data.documents[index].data['gameLore'].toString()),
+                            subtitle: Text(snapshot
+                                .data.documents[index].data['gameLore']
+                                .toString()),
                           ),
                         ),
                         Positioned(
                             bottom: 0,
                             right: 0,
-                            child: Text(
-                                "最終編集日 " + snapshot.data.documents[index].data['gameDate'].toString()))
+                            child: Text("最終編集日 " +
+                                snapshot.data.documents[index].data['gameDate']
+                                    .toString()))
                       ],
                     ),
                   ),
@@ -241,7 +253,6 @@ class GameSelect extends State<StateHome> {
                     child: Icon(Icons.add),
                     onPressed: () {
                       showDialog(
-                        
                           context: context,
                           builder: (BuildContext context) =>
                               setDialog(true, -1));
@@ -253,24 +264,7 @@ class GameSelect extends State<StateHome> {
           ),
         );
       },
-      
     );
-    setKey(syncSnap);
-    return main;
-  }
-
-  void setKey(AsyncSnapshot<QuerySnapshot> snapshot) async {
-    debugPrint("call");
-    while(snapshot == null){
-      await new Future.delayed(new Duration(seconds: 1));
-      debugPrint("null");
-    }
-    documentKey.clear();
-    snapshot.data.documents.forEach((var d){
-      debugPrint("***:::::" + d.documentID);
-      documentKey.add(d.documentID);
-    });
-    
   }
 
   Widget setDialog(bool t, int index) {
@@ -305,8 +299,8 @@ class GameSelect extends State<StateHome> {
       return RaisedButton(
         color: Colors.lightGreen[100],
         onPressed: () {
-          _addItem(gameTitle.text, gameLore.text, index,syncSnap);
-          
+          _addItem(gameTitle.text, gameLore.text, index, syncSnap);
+
           gameTitle.clear();
           gameLore.clear();
           Navigator.of(context).pop();
@@ -322,7 +316,7 @@ class GameSelect extends State<StateHome> {
       return RaisedButton(
         color: Colors.lightGreen[100],
         onPressed: () {
-          _addItem(gameTitle.text, gameLore.text, index,syncSnap);
+          _addItem(gameTitle.text, gameLore.text, index, syncSnap);
           gameTitle.clear();
           gameLore.clear();
           Navigator.of(context).pop();
@@ -1147,5 +1141,3 @@ class DataType {
   DataType(
       this.modelDataList, this.dataNameList, this.dataTitle, this.dataLore);
 }
-
-
